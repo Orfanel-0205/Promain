@@ -77,22 +77,22 @@ export default function ChatbotScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       className="flex-1 bg-white"
     >
-      <View className="flex-1 px-4 pt-12 pb-4">
-        <View className="flex-row items-center gap-2 mb-4">
+      <View className="flex-1 px-2 pt-6 pb-2">
+        <View className="flex-row items-center gap-2 mb-2">
           <Pressable onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={28} color="#0D9488" />
+            <Ionicons name="arrow-back" size={24} color="#0F766E" />
           </Pressable>
-          <Text className="text-heading font-bold text-teal-900">Ask Ka-agapay</Text>
+          <Text className="text-body font-bold text-[#111827]">Ask Ka-agapay</Text>
         </View>
 
-        <View className="bg-amber-50 rounded-2xl p-3 mb-4 border border-amber-200">
-          <Text className="text-body text-amber-900">{CHATBOT_DISCLAIMER}</Text>
+        <View className="bg-[#F3F4F6] rounded-xl p-2 mb-2 border border-[#0F766E]">
+          <Text className="text-sm text-[#111827]">{CHATBOT_DISCLAIMER}</Text>
         </View>
 
         <ScrollView
           ref={scrollRef}
-          className="flex-1 mb-4"
-          contentContainerStyle={{ paddingBottom: 16 }}
+          className="flex-1 mb-2"
+          contentContainerStyle={{ paddingBottom: 8 }}
           onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
         >
           {messages.map((msg, i) => (
@@ -101,12 +101,12 @@ export default function ChatbotScreen() {
               className={`mb-3 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
             >
               <View
-                className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+                className={`max-w-[85%] rounded-2xl px-3 py-2 ${
                   msg.role === 'user' ? 'bg-primary' : 'bg-teal-50 border border-teal-200'
                 }`}
               >
                 <Text
-                  className={`text-body ${msg.role === 'user' ? 'text-white' : 'text-teal-900'}`}
+                  className={`text-sm ${msg.role === 'user' ? 'text-white' : 'text-teal-900'}`}
                 >
                   {msg.content}
                 </Text>
@@ -123,27 +123,27 @@ export default function ChatbotScreen() {
             </View>
           ))}
           {loading && (
-            <View className="items-start mb-3">
-              <View className="bg-teal-50 rounded-2xl px-4 py-3 border border-teal-200">
-                <ActivityIndicator size="small" color="#0D9488" />
+            <View className="items-start mb-2">
+              <View className="bg-[#F3F4F6] rounded-2xl px-3 py-2 border border-[#0F766E]">
+                <ActivityIndicator size="small" color="#0F766E" />
               </View>
             </View>
           )}
         </ScrollView>
 
-        <View className="flex-row flex-wrap gap-2 mb-3">
+        <View className="flex-row flex-wrap gap-1 mb-2">
           {SUGGESTIONS.map((s) => (
             <Pressable
               key={s}
               onPress={() => setInput(s)}
-              className="rounded-xl bg-teal-100 px-3 py-2"
+              className="rounded-lg bg-[#F3F4F6] px-2 py-1 border border-[#0F766E]"
             >
-              <Text className="text-body text-teal-800">{s}</Text>
+              <Text className="text-xs text-[#111827]">{s}</Text>
             </Pressable>
           ))}
         </View>
 
-        <View className="flex-row items-center gap-2 bg-teal-50 rounded-2xl border border-teal-200 px-3 py-2">
+        <View className="flex-row items-center gap-1 bg-[#F3F4F6] rounded-2xl border border-[#0F766E] px-2 py-1">
           <TextInput
             value={input}
             onChangeText={setInput}
@@ -151,15 +151,15 @@ export default function ChatbotScreen() {
             placeholderTextColor="#94A3B8"
             multiline
             maxLength={500}
-            className="flex-1 text-body text-teal-900 py-2 max-h-24"
+            className="flex-1 text-xs text-[#111827] py-1 max-h-20"
             onSubmitEditing={handleSend}
           />
           <Pressable
             onPress={handleSend}
             disabled={!input.trim() || loading}
-            className="bg-primary rounded-xl p-3"
+            className="bg-[#0F766E] rounded-lg p-1.5"
           >
-            <Ionicons name="send" size={24} color="#fff" />
+            <Ionicons name="send" size={18} color="#FFFFFF" />
           </Pressable>
         </View>
       </View>

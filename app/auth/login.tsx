@@ -11,14 +11,15 @@ import {
   ActivityIndicator,
   Alert,
   Keyboard,
+  StyleSheet,
 } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/context/AuthContext';
 
-// Same logo as loading/splash – appears at top of login (transition from loading)
-const LOGO_SOURCE = require('@/assets/images/splash-icon.png');
+// Logo for login page
+const LOGO_SOURCE = require('@/assets/images/logo.png');
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -68,39 +69,32 @@ export default function LoginScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
+      style={styles.container}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}
-      className="bg-white"
     >
       <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          paddingHorizontal: 24,
-          paddingTop: 16,
-          paddingBottom: 40,
-        }}
+        contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Logo at top – same as loading screen (transition from splash) */}
-        <View className="items-center pt-4 pb-4">
+        <View style={styles.logoContainer}>
           <Image
             source={LOGO_SOURCE}
             resizeMode="contain"
-            style={{ width: 120, height: 120 }}
+            style={styles.logo}
           />
         </View>
 
-        <Text className="text-heading-lg font-bold text-teal-900 text-center mb-1">
+        <Text style={styles.title}>
           Ka-agapay
         </Text>
-        <Text className="text-body text-teal-800 text-center mb-6">
-          Malasiqui RHU – Health at Your Side
+        <Text style={styles.subtitle}>
+          Malasiqui RHU – Sandalan Para Sa Kalusugan
         </Text>
 
-        <View className="mb-4">
-          <Text className="text-body font-semibold text-teal-900 mb-2">
-            📱 Numero ng telepono
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>
+            Numero ng Telepono
           </Text>
           <TextInput
             value={phone}
@@ -109,15 +103,15 @@ export default function LoginScreen() {
             placeholderTextColor="#94A3B8"
             keyboardType="phone-pad"
             maxLength={11}
-            className="bg-teal-50 border border-teal-200 rounded-2xl px-4 py-4 text-body text-teal-900"
+            style={styles.input}
           />
         </View>
 
-        <View className="mb-6">
-          <Text className="text-body font-semibold text-teal-900 mb-2">
-            🔐 PIN (4–6 digit)
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>
+            PIN (4–6 digit)
           </Text>
-          <View className="flex-row items-center bg-teal-50 border border-teal-200 rounded-2xl">
+          <View style={styles.pinContainer}>
             <TextInput
               value={pin}
               onChangeText={(t) => setPin(t.replace(/\D/g, '').slice(0, 6))}
@@ -126,10 +120,10 @@ export default function LoginScreen() {
               secureTextEntry={!showPin}
               keyboardType="number-pad"
               maxLength={6}
-              className="flex-1 px-4 py-4 text-body text-teal-900"
+              style={styles.pinInput}
             />
-            <Pressable onPress={() => setShowPin(!showPin)} className="pr-4">
-              <Ionicons name={showPin ? 'eye-off' : 'eye'} size={24} color="#0D9488" />
+            <Pressable onPress={() => setShowPin(!showPin)} style={styles.eyeButton}>
+              <Ionicons name={showPin ? 'eye-off' : 'eye'} size={24} color="#0F766E" />
             </Pressable>
           </View>
         </View>
@@ -137,38 +131,155 @@ export default function LoginScreen() {
         <Pressable
           onPress={handleLogin}
           disabled={loading}
-          className="bg-primary rounded-2xl py-4 shadow-md active:opacity-90"
+          style={styles.loginButton}
         >
           {loading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text className="text-center text-body font-bold text-white">
+            <Text style={styles.loginButtonText}>
               Mag-log in
             </Text>
           )}
         </Pressable>
 
+        <Pressable
+          onPress={() => router.push('/auth/register')}
+          style={styles.registerButton}
+        >
+          <Text style={styles.registerButtonText}>
+            Magrehistro
+          </Text>
+        </Pressable>
+
         {biometricAvailable && (
           <Pressable
             onPress={handleBiometric}
-            className="mt-4 rounded-2xl py-3 border-2 border-primary items-center"
+            style={styles.biometricButton}
           >
-            <Ionicons name="finger-print" size={28} color="#0D9488" />
-            <Text className="text-body font-semibold text-primary mt-1">
-              Mag-log in gamit ang fingerprint
+            <Ionicons name="finger-print" size={28} color="white" />
+            <Text style={styles.biometricButtonText}>
+              Biometric scanner
             </Text>
           </Pressable>
         )}
-
-        <Pressable
-          onPress={() => router.push('/auth/register')}
-          className="mt-8 rounded-2xl py-4 border-2 border-teal-300"
-        >
-          <Text className="text-center text-body font-semibold text-teal-800">
-            Walang account? Magrehistro
-          </Text>
-        </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#2ED3B7',
+  },
+  scrollContainer: {
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+    paddingTop: 40,
+    paddingBottom: 60,
+  },
+  logoContainer: {
+    alignItems: 'center',
+    paddingTop: 16,
+    paddingBottom: 16,
+  },
+  logo: {
+    width: 120,
+    height: 120,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  inputContainer: {
+    marginBottom: 16,
+  },
+  inputLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 8,
+  },
+  input: {
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: '#0F766E',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    fontSize: 16,
+    color: '#111827',
+  },
+  pinContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: '#0F766E',
+    borderRadius: 16,
+  },
+  pinInput: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    fontSize: 16,
+    color: '#111827',
+  },
+  eyeButton: {
+    paddingRight: 16,
+  },
+  loginButton: {
+    backgroundColor: '#6B7280',
+    borderRadius: 16,
+    paddingVertical: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  loginButtonText: {
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  biometricButton: {
+    marginTop: 16,
+    borderRadius: 16,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  biometricButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginTop: 4,
+  },
+  registerButton: {
+    backgroundColor: '#0F766E',
+    marginTop: 32,
+    borderRadius: 16,
+    paddingVertical: 16,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+  registerButtonText: {
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+});
