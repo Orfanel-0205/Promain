@@ -1,50 +1,85 @@
-# Welcome to your Expo app 👋
+# Ka-agapay – Mobile Health Service App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Mobile-first health service application for **RHU1 and RHU2, Malasiqui, Pangasinan**. Built for barangay residents including elderly, low-literacy, and PWD users. Runs in **Expo Go** on Android.
 
-## Get started
+## Tech Stack
 
-1. Install dependencies
+- **Frontend:** React Native + Expo
+- **Styling:** NativeWind (Tailwind for React Native)
+- **Navigation:** Expo Router
+- **State:** React Context (Auth)
+- **Backend:** REST API (configure `EXPO_PUBLIC_API_URL` in env)
+- **Offline:** AsyncStorage cache
+
+## Features
+
+- **Account & Auth:** OTP + 4–6 digit PIN, optional biometrics (Face ID/Fingerprint)
+- **Home:** Greeting, 4 main actions (Book Appointment, Health Programs, My Queue, Ask Ka-agapay), next appointment card, queue status
+- **Health Programs:** List with descriptions, schedule, “Makinig” (Read Aloud) TTS
+- **Appointments:** Step-by-step booking (service → date → AM/PM → RHU) → QR + queue number
+- **Digital Queue:** Queue number, now serving, estimated wait, priority (Senior/PWD/Pregnant)
+- **AI Chatbot:** Simple Filipino, text input, TTS responses, disclaimer (“Hindi ako kapalit ng doktor”)
+- **Announcements:** Feed with “Read Aloud” per post
+- **Notifications:** In-app list; SMS fallback when internet is weak
+- **Feedback:** 1–5 emoji rating + one-tap options
+
+## Accessibility
+
+- Large text (16px body, 20–24px headings)
+- High contrast (dark text on light background)
+- Icons paired with labels
+- TTS (Makinig) on programs and announcements
+- Simple Filipino by default
+- Thumb-friendly primary buttons
+
+## Get Started
+
+1. **Install**
 
    ```bash
    npm install
    ```
 
-2. Start the app
+2. **Environment (optional)**
+
+   Create `.env` or set:
+
+   ```bash
+   EXPO_PUBLIC_API_URL=https://ka-agapay-api.vercel.app/api
+   ```
+
+3. **Run**
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+   Then open in **Expo Go** on your Android device (scan QR).
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+   **Windows:** The project uses `metro.config.cjs` (not `metro.config.js`) so Metro loads the config with CommonJS and avoids the ESM/Windows path error. Do not add a `metro.config.js` file.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## API Endpoints (Backend)
 
-## Get a fresh project
+The app expects:
 
-When you're ready, run:
+- `POST /auth/request-otp`, `POST /auth/register`, `POST /auth/verify-otp`, `POST /auth/login`
+- `GET /user/profile`
+- `POST /appointments`, `GET /appointments/:userId`, `GET /appointments/:id`, `PATCH /appointments/:id/cancel`
+- `GET /queue/status/:appointmentId`
+- `GET /programs`, `GET /announcements`
+- `POST /chatbot/message`, `POST /feedback`
 
-```bash
-npm run reset-project
-```
+## Project Structure
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- `app/` – Expo Router screens (tabs, auth, appointments, chatbot, announcements, notifications, feedback)
+- `components/` – Reusable UI
+- `context/` – AuthContext
+- `hooks/` – useTts, etc.
+- `services/api/` – API client and endpoints
+- `services/storage/` – AsyncStorage cache
+- `types/` – TypeScript types
+- `utils/` – Constants (barangays, services, RHU, etc.)
 
-## Learn more
+## License
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Private.
