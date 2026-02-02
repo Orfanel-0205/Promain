@@ -25,6 +25,7 @@ export default function RegisterScreen() {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<RegisterInput>({
     firstName: '',
+    middleName: '',
     lastName: '',
     phone: '',
     barangay: '',
@@ -73,7 +74,7 @@ export default function RegisterScreen() {
           <>
             <Text style={styles.sectionTitle}>Pangalan at numero ng telepono</Text>
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>👤 Unang pangalan</Text>
+              <Text style={styles.inputLabel}>Unang pangalan</Text>
               <TextInput
                 value={form.firstName}
                 onChangeText={(t) => update('firstName', t)}
@@ -83,7 +84,17 @@ export default function RegisterScreen() {
               />
             </View>
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>👤 Apelyido</Text>
+              <Text style={styles.inputLabel}>Gitnang pangalan (opsyonal)</Text>
+              <TextInput
+                value={form.middleName}
+                onChangeText={(t) => update('middleName', t)}
+                placeholder="Gitnang pangalan"
+                placeholderTextColor="#94A3B8"
+                style={styles.input}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Apelyido</Text>
               <TextInput
                 value={form.lastName}
                 onChangeText={(t) => update('lastName', t)}
@@ -93,7 +104,7 @@ export default function RegisterScreen() {
               />
             </View>
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>📱 Numero ng telepono</Text>
+              <Text style={styles.inputLabel}>Numero ng telepono</Text>
               <TextInput
                 value={form.phone}
                 onChangeText={(t) => setForm((f) => ({ ...f, phone: t }))}
@@ -118,7 +129,7 @@ export default function RegisterScreen() {
           <>
             <Text style={styles.sectionTitle}>Barangay, kapanganakan, at kasarian</Text>
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>📍 Barangay</Text>
+              <Text style={styles.inputLabel}>Barangay</Text>
               <Pressable
                 onPress={() => setShowBarangayPicker(!showBarangayPicker)}
                 style={styles.picker}
@@ -140,7 +151,7 @@ export default function RegisterScreen() {
               )}
             </View>
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>📅 Kapanganakan (YYYY-MM-DD)</Text>
+              <Text style={styles.inputLabel}>Kapanganakan (YYYY-MM-DD)/(TAON-BUWAN-ARAW)</Text>
               <TextInput
                 value={form.birthdate}
                 onChangeText={(t) => update('birthdate', t)}
@@ -150,7 +161,7 @@ export default function RegisterScreen() {
               />
             </View>
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>⚥ Kasarian</Text>
+              <Text style={styles.inputLabel}>Kasarian</Text>
               <View style={styles.sexOptions}>
                 {SEX_OPTIONS.map((o) => (
                   <Pressable
@@ -192,9 +203,9 @@ export default function RegisterScreen() {
 
         {step === 3 && (
           <>
-            <Text style={styles.sectionTitle}>Gumawa ng 4–6 digit PIN (hindi password)</Text>
+            <Text style={styles.sectionTitle}>Gumawa ng 4–6 na digit/numero (hindi password)</Text>
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>🔐 PIN</Text>
+              <Text style={styles.inputLabel}>PIN</Text>
               <TextInput
                 value={form.pin}
                 onChangeText={(t) => update('pin', t.replace(/\D/g, '').slice(0, 6))}
@@ -207,7 +218,7 @@ export default function RegisterScreen() {
               />
             </View>
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>🔐 Ulitin ang PIN</Text>
+              <Text style={styles.inputLabel}>Ulitin ang PIN</Text>
               <TextInput
                 value={pinConfirm}
                 onChangeText={(t) => setPinConfirm(t.replace(/\D/g, '').slice(0, 6))}
@@ -242,7 +253,9 @@ export default function RegisterScreen() {
               <View style={styles.summaryContainer}>
                 <View style={styles.summaryRow}>
                   <Text style={styles.summaryLabel}>Pangalan:</Text>
-                  <Text style={styles.summaryValue}>{form.firstName} {form.lastName}</Text>
+                  <Text style={styles.summaryValue}>
+                    {form.firstName} {form.middleName ? form.middleName + ' ' : ''}{form.lastName}
+                  </Text>
                 </View>
                 <View style={styles.summaryRow}>
                   <Text style={styles.summaryLabel}>Telepono:</Text>
