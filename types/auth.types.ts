@@ -15,6 +15,7 @@ export type User = {
 
 export type RegisterInput = {
   firstName: string;
+  middleName: string;
   lastName: string;
   phone: string;
   barangay: string;
