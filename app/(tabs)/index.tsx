@@ -1,146 +1,187 @@
-import { useEffect, useState } from 'react';
-import { View, Text, Pressable, ScrollView, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useEffect, useState, useCallback } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import { getAppointmentsByUser } from '@/services/api/appointments';
 import { getQueueStatus } from '@/services/api/queue';
 import type { Appointment } from '@/types';
 import type { QueueStatus } from '@/types/queue.types';
 
+/* ─── Placeholder News Data ─── */
+const NEWS = [
+  {
+    id: '1',
+    title: 'Libreng Medical Mission',
+    summary: 'May libreng konsultasyon at BP check sa Feb 15.',
+    type: 'event',
+    date: 'Feb 15, 2026',
+  },
+  {
+    id: '2',
+    title: 'Telemedicine Now Available',
+    summary: 'Pwede ka nang magpakonsulta online.',
+    type: 'news',
+    date: 'Feb 2, 2026',
+  },
+];
+
 export default function HomeScreen() {
   const router = useRouter();
   const { user } = useAuth();
+
   const [nextAppointment, setNextAppointment] = useState<Appointment | null>(null);
   const [queueStatus, setQueueStatus] = useState<QueueStatus | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
+  const firstName = user?.firstName || 'User';
+
+  /* ─── Load Dashboard Data ─── */
+  const loadData = useCallback(async () => {
     if (!user?.id) return;
-    (async () => {
-      try {
-        const appointments = await getAppointmentsByUser(user.id);
-        const upcoming = appointments
+    try {
+      const appointments = await getAppointmentsByUser(user.id);
+      const upcoming =
+        appointments
           .filter((a) => a.status === 'scheduled' || a.status === 'in_queue')
-          .sort((a, b) => new Date(a.preferredDate).getTime() - new Date(b.preferredDate).getTime())[0] || null;
-        setNextAppointment(upcoming);
-        if (upcoming?.id) {
-          try {
-            const q = await getQueueStatus(upcoming.id);
-            setQueueStatus(q);
-          } catch {
-            setQueueStatus(null);
-          }
-        } else {
-          setQueueStatus(null);
-        }
-      } catch {
-        setNextAppointment(null);
-        setQueueStatus(null);
-      } finally {
-        setLoading(false);
+          .sort(
+            (a, b) =>
+              new Date(a.preferredDate).getTime() -
+              new Date(b.preferredDate).getTime()
+          )[0] || null;
+
+      setNextAppointment(upcoming);
+
+      if (upcoming?.id) {
+        const q = await getQueueStatus(upcoming.id);
+        setQueueStatus(q);
       }
-    })();
+    } catch {
+      setNextAppointment(null);
+      setQueueStatus(null);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
   }, [user?.id]);
 
-  const firstName = user?.firstName || user?.fullName?.split(' ')[0] || 'User';
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  /* ─── News Card ─── */
+  const renderNews = ({ item }: any) => (
+    <View className="bg-white rounded-2xl p-4 mb-3 border border-teal-100">
+      <Text className="font-bold text-teal-900 mb-1">{item.title}</Text>
+      <Text className="text-teal-700 text-sm mb-1">{item.summary}</Text>
+      <Text className="text-xs text-slate-400">{item.date}</Text>
+    </View>
+  );
 
   return (
-    <ScrollView className="flex-1 bg-white" contentContainerStyle={{ padding: 16, paddingBottom: 32 }}>
-      <Text className="text-heading-lg font-bold text-teal-900 mt-2 mb-1">
+    <ScrollView
+      className="flex-1 bg-white"
+      contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={loadData} />
+      }
+    >
+      {/* Greeting */}
+      <Text className="text-2xl font-bold text-teal-900 mb-1">
         Magandang araw, {firstName}!
       </Text>
-      <Text className="text-body text-teal-800 mb-6">Piliin ang serbisyo na kailangan mo.</Text>
+      <Text className="text-teal-700 mb-6">
+        Piliin ang serbisyong kailangan mo
+      </Text>
 
+      {/* Quick Actions */}
       <View className="gap-4 mb-6">
-        <Pressable
+        <Action
+          icon="calendar"
+          label="Mag-book ng Appointment"
           onPress={() => router.push('/appointments/create')}
-          className="bg-primary rounded-2xl p-5 flex-row items-center gap-4 shadow-md active:opacity-90"
-        >
-          <View className="w-12 h-12 rounded-xl bg-white/30 items-center justify-center">
-            <Ionicons name="calendar" size={28} color="#fff" />
-          </View>
-          <Text className="text-heading font-bold text-white flex-1">Mag-book ng Appointment</Text>
-          <Ionicons name="chevron-forward" size={24} color="#fff" />
-        </Pressable>
-
-        <Pressable
+        />
+        <Action
+          icon="medkit"
+          label="Health Programs"
           onPress={() => router.push('/(tabs)/programs')}
-          className="bg-teal-100 rounded-2xl p-5 flex-row items-center gap-4 border border-teal-200 active:opacity-90"
-        >
-          <View className="w-12 h-12 rounded-xl bg-primary/20 items-center justify-center">
-            <Ionicons name="medkit" size={28} color="#0D9488" />
-          </View>
-          <Text className="text-heading font-bold text-teal-900 flex-1">Health Programs</Text>
-          <Ionicons name="chevron-forward" size={24} color="#0D9488" />
-        </Pressable>
-
-        <Pressable
+        />
+        <Action
+          icon="ticket"
+          label="My Queue"
           onPress={() => router.push('/(tabs)/queue')}
-          className="bg-teal-100 rounded-2xl p-5 flex-row items-center gap-4 border border-teal-200 active:opacity-90"
-        >
-          <View className="w-12 h-12 rounded-xl bg-primary/20 items-center justify-center">
-            <Ionicons name="ticket" size={28} color="#0D9488" />
-          </View>
-          <Text className="text-heading font-bold text-teal-900 flex-1">My Queue</Text>
-          <Ionicons name="chevron-forward" size={24} color="#0D9488" />
-        </Pressable>
-
-        <Pressable
+        />
+        <Action
+          icon="chatbubble-ellipses"
+          label="Ask Ka-agapay"
           onPress={() => router.push('/chatbot')}
-          className="bg-teal-100 rounded-2xl p-5 flex-row items-center gap-4 border border-teal-200 active:opacity-90"
-        >
-          <View className="w-12 h-12 rounded-xl bg-primary/20 items-center justify-center">
-            <Ionicons name="chatbubble-ellipses" size={28} color="#0D9488" />
-          </View>
-          <Text className="text-heading font-bold text-teal-900 flex-1">Ask Ka-agapay</Text>
-          <Ionicons name="chevron-forward" size={24} color="#0D9488" />
-        </Pressable>
+        />
       </View>
 
+      {/* Appointment & Queue */}
       {loading ? (
-        <View className="py-6">
-          <ActivityIndicator size="small" color="#0D9488" />
-        </View>
+        <ActivityIndicator color="#0D9488" />
       ) : (
         <>
           {nextAppointment && (
-            <Pressable
-              onPress={() => router.push(`/appointments/${nextAppointment.id}`)}
-              className="bg-teal-50 rounded-2xl p-4 border border-teal-200 mb-4"
-            >
-              <Text className="text-body font-semibold text-teal-900 mb-2">📅 Susunod na appointment</Text>
-              <Text className="text-body text-teal-800">
-                {nextAppointment.preferredDate} • {nextAppointment.timeBlock} • {nextAppointment.rhuLocation}
+            <View className="bg-teal-50 rounded-2xl p-4 mb-4">
+              <Text className="font-semibold text-teal-900">
+                📅 Susunod na Appointment
               </Text>
-              <Text className="text-body text-teal-700 mt-1">Q-{nextAppointment.queueNumber}</Text>
-            </Pressable>
+              <Text className="text-teal-700">
+                {nextAppointment.preferredDate} • Q-
+                {nextAppointment.queueNumber}
+              </Text>
+            </View>
           )}
 
           {queueStatus && (
-            <View className="bg-primary/10 rounded-2xl p-4 border border-primary/30">
-              <Text className="text-body font-semibold text-teal-900 mb-2">🎟 Kasalukuyang pila</Text>
-              <Text className="text-heading font-bold text-teal-900">
-                Now serving: {queueStatus.nowServing}
+            <View className="bg-primary/10 rounded-2xl p-4 mb-6">
+              <Text className="font-bold text-teal-900">
+                Now Serving: {queueStatus.nowServing}
               </Text>
-              <Text className="text-body text-teal-800 mt-1">
-                Tinatayang hintay: ~{queueStatus.estimatedWaitMinutes} min
+              <Text className="text-teal-700">
+                Est. wait: {queueStatus.estimatedWaitMinutes} mins
               </Text>
-              {queueStatus.isNext && (
-                <Text className="text-body font-bold text-primary mt-2">Ikaw na ang susunod!</Text>
-              )}
             </View>
           )}
         </>
       )}
 
-      <Pressable
-        onPress={() => router.push('/announcements')}
-        className="mt-6 rounded-2xl py-3 border border-teal-300 flex-row items-center justify-center gap-2"
-      >
-        <Ionicons name="megaphone" size={22} color="#0D9488" />
-        <Text className="text-body font-semibold text-teal-800">Mga anunsyo at health tips</Text>
-      </Pressable>
+      {/* News */}
+      <Text className="text-xl font-bold text-teal-900 mb-3">
+        📰 Balita at Events
+      </Text>
+
+      <FlatList
+        data={NEWS}
+        renderItem={renderNews}
+        keyExtractor={(item) => item.id}
+        scrollEnabled={false}
+      />
     </ScrollView>
+  );
+}
+
+/* ─── Reusable Action Button ─── */
+function Action({ icon, label, onPress }: any) {
+  return (
+    <Pressable
+      onPress={onPress}
+      className="bg-teal-100 rounded-2xl p-5 flex-row items-center gap-4 border border-teal-200"
+    >
+      <Ionicons name={icon} size={26} color="#0D9488" />
+      <Text className="font-bold text-teal-900 flex-1">{label}</Text>
+      <Ionicons name="chevron-forward" size={22} color="#0D9488" />
+    </Pressable>
   );
 }

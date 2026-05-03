@@ -6,7 +6,7 @@ export default function Dashboard() {
 
   return (
     <View className="flex-1 p-6 bg-gray-100">
-      <Text className="text-xl font-bold">Welcome, {user?.name}</Text>
+      <Text className="text-xl font-bold">Welcome, {user?.fullName}</Text>
       <Text className="mt-2 text-gray-600">
         Rural Health Unit Dashboard
       </Text>

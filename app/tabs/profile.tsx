@@ -1,3 +1,4 @@
+//app/tabs/profile.tsx
 import { View, Text } from 'react-native';
 import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';

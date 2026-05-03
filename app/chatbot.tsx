@@ -1,3 +1,4 @@
+//app/chatbot.tsx
 import { useState, useRef } from 'react';
 import {
   View,
@@ -8,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';

@@ -1,17 +1,13 @@
-import { Stack, Redirect } from 'expo-router';
-import { useAuth } from '@/context/AuthContext';
+// app/(auth)/_layout.tsx
+
+import { Stack } from "expo-router";
 
 export default function AuthLayout() {
-  const { user, isLoading } = useAuth();
-
-  if (isLoading) return null;
-  if (user) return <Redirect href="/(tabs)" />;
-
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="login" />
-      <Stack.Screen name="register" />
-      <Stack.Screen name="verify-otp" />
+      <Stack.Screen name="login" options={{ headerShown: false }} />
+      <Stack.Screen name="register" options={{ headerShown: false }} />
+      <Stack.Screen name="pending" options={{ headerShown: false }} />
     </Stack>
   );
 }

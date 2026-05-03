@@ -1,13 +1,7 @@
-import type {
-  AuthResponse,
-  LoginInput,
-  RegisterInput,
-  User,
-  VerifyOtpInput,
-} from "@/types";
-import { api } from "./client";
+import { api } from "@/services/api/client";
+import type { LoginInput, RegisterInput, User, VerifyOtpInput } from "@/types";
 
-export type RegisterResponse = AuthResponse;
+export type RegisterResponse = { userId: string; message: string };
 export type VerifyOtpResponse = { token: string; user: User };
 export type LoginResponse = { token: string; user: User };
 
