@@ -50,12 +50,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (input: LoginInput) => {
     const { token, user: u } = await authApi.login(input);
+    if (!token || !u) {
+      throw new Error("Invalid login response from server.");
+    }
     await SecureStore.setItemAsync('token', token);
     await SecureStore.setItemAsync('user', JSON.stringify(u));
     setUser(u);
   };
 
   const loginWithToken = async (token: string, u: User) => {
+    if (!token || !u) {
+      throw new Error("Invalid auth response from server.");
+    }
     await SecureStore.setItemAsync('token', token);
     await SecureStore.setItemAsync('user', JSON.stringify(u));
     setUser(u);

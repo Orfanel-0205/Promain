@@ -1,9 +1,24 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
+
+function normalizeBaseUrl(url: string): string {
+  const trimmed = url.trim().replace(/\/+$/, "");
+  if (/\/api\/v\d+$/i.test(trimmed)) {
+    return trimmed;
+  }
+  if (/\/api$/i.test(trimmed)) {
+    return `${trimmed}/v1`;
+  }
+  return `${trimmed}/api/v1`;
+}
+
 const BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL ||
+  normalizeBaseUrl(
+    process.env.EXPO_PUBLIC_API_URL ||
+      process.env.EXPO_PUBLIC_API_BASE_URL ||
   process.env.API_BASE_URL ||
-  "https://ka-agapay-api.vercel.app/api";
+      "https://ka-agapay-api.vercel.app/api/v1",
+  );
 
 export const api = axios.create({
   baseURL: BASE_URL,

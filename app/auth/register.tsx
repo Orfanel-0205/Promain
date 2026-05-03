@@ -1,4 +1,5 @@
 ﻿import * as authApi from "@/services/api/auth";
+import { useAuth } from "@/context/AuthContext";
 import type { RegisterInput } from "@/types";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -17,6 +18,7 @@ import {
 
 export default function RegisterScreen() {
   const router = useRouter();
+  const { login } = useAuth();
   const [form, setForm] = useState<RegisterInput>({
     firstName: "",
     middleName: "",
@@ -72,7 +74,7 @@ export default function RegisterScreen() {
 
     setLoading(true);
     try {
-      const response = await authApi.register({
+      await authApi.register({
         firstName: form.firstName.trim(),
         middleName: form.middleName?.trim() ?? "",
         lastName: form.lastName.trim(),
@@ -84,20 +86,8 @@ export default function RegisterScreen() {
         isSeniorOrPwd: form.isSeniorOrPwd,
         pin: form.pin,
       });
-
-      Alert.alert(
-        "Matagumpay!",
-        "Naipadala ang OTP sa iyong numero. I-verify ito upang magpatuloy.",
-        [
-          {
-            text: "OK",
-            onPress: () =>
-              router.push(
-                `/auth/verify-otp?phone=${encodeURIComponent(form.phone.trim())}`,
-              ),
-          },
-        ],
-      );
+      await login({ phone: form.phone.trim(), pin: form.pin });
+      router.replace("/(tabs)");
     } catch (error: any) {
       const message =
         error?.response?.data?.message ||
@@ -121,7 +111,7 @@ export default function RegisterScreen() {
       >
         <Text style={styles.title}>Magrehistro</Text>
         <Text style={styles.subtitle}>
-          Kumpletuhin ang impormasyon para makuha ang OTP.
+          Kumpletuhin ang impormasyon para makagawa ng account.
         </Text>
 
         <View style={styles.field}>

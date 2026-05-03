@@ -14,9 +14,6 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     if (isLoading) return;
 
     const inAuthGroup = segments[0] === "auth";
-    const inTabsGroup = segments[0] === "(tabs)";
-    const inPendingScreen = inAuthGroup && segments[1] === "pending";
-
     if (!isAuthenticated) {
       if (!inAuthGroup) {
         router.replace("/auth/login");
@@ -24,16 +21,11 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    if (user?.account_status === "pending" && !inPendingScreen) {
-      router.replace("/auth/pending");
-      return;
-    }
-
-    if (user?.account_status === "active" && inAuthGroup) {
+    if (inAuthGroup) {
       router.replace("/(tabs)");
       return;
     }
-  }, [isAuthenticated, isLoading, segments, user?.account_status, router]);
+  }, [isAuthenticated, isLoading, segments, router]);
 
   if (isLoading) {
     return (

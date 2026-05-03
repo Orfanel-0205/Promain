@@ -39,22 +39,11 @@ export default function TabsLayout() {
 
       {/* Telemedicine */}
       <Tabs.Screen
-        name="telemedicine"
+        name="Telemedicine"
         options={{
           title: 'Telemed',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="videocam-outline" size={size} color={color} />
-          ),
-        }}
-      />
-
-      {/* Appointments */}
-      <Tabs.Screen
-        name="appointments"
-        options={{
-          title: 'Appointments',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="calendar-outline" size={size} color={color} />
           ),
         }}
       />

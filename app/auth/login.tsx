@@ -27,15 +27,15 @@ export default function LoginScreen() {
       return;
     }
 
-    if (pin.length < 4) {
-      Alert.alert("Mali", "Ilagay ang iyong PIN (4–6 digit).");
+    if (pin.trim().length < 4) {
+      Alert.alert("Mali", "Ilagay ang iyong PIN o password.");
       return;
     }
 
     setLoading(true);
     try {
       await login({ phone, pin });
-      router.replace("/");
+      router.replace("/(tabs)");
     } catch (error: any) {
       const message =
         error?.response?.data?.message ||
@@ -47,7 +47,7 @@ export default function LoginScreen() {
     }
   };
 
-  const isDisabled = loading || phone.length !== 11 || pin.length < 4;
+  const isDisabled = loading || phone.length !== 11 || pin.trim().length < 4;
 
   return (
     <View style={styles.container}>
@@ -78,11 +78,11 @@ export default function LoginScreen() {
         <Text style={styles.label}>PIN</Text>
         <TextInput
           value={pin}
-          onChangeText={(text) => setPin(text.replace(/\D/g, "").slice(0, 6))}
-          placeholder="4–6 digit"
+          onChangeText={(text) => setPin(text)}
+          placeholder="PIN / Password"
           placeholderTextColor="#94A3B8"
           secureTextEntry
-          keyboardType="number-pad"
+          autoCapitalize="none"
           style={styles.input}
         />
       </View>
