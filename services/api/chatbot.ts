@@ -1,4 +1,4 @@
-import { api } from './client';
+import { api } from "./client";
 
 export type ChatbotMessageResponse = {
   message: string;
@@ -7,9 +7,9 @@ export type ChatbotMessageResponse = {
 
 export async function sendChatMessage(
   message: string,
-  conversationId?: string
+  conversationId?: string,
 ): Promise<ChatbotMessageResponse> {
-  const { data } = await api.post<ChatbotMessageResponse>('/chatbot/message', {
+  const { data } = await api.post<ChatbotMessageResponse>("/v1/chat/message", {
     message,
     conversationId,
   });
