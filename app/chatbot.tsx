@@ -4,18 +4,17 @@ import { sendChatMessage } from "@/services/api/chatbot";
 import type { ChatMessage } from "@/types";
 import { CHATBOT_DISCLAIMER } from "@/utils/constants";
 import { Ionicons } from "@expo/vector-icons";
-import { format } from "date-fns"; // Note: Ensure you run 'npm install date-fns'
+import { format } from "date-fns";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
-  ActivityIndicator,
   FlatList,
   KeyboardAvoidingView,
   Platform,
   Pressable,
   Text,
   TextInput,
-  View,
+  View
 } from "react-native";
 
 const SUGGESTIONS = [
@@ -201,8 +200,11 @@ export default function ChatbotScreen() {
 
         {loading && (
           <View className="flex-row justify-start mb-2">
-            <View className="bg-white rounded-xl px-4 py-3 border border-gray-200 rounded-bl-none shadow-sm">
-              <ActivityIndicator size="small" color="#0F766E" />
+            <View className="bg-white rounded-xl px-4 py-3 border border-gray-200 rounded-bl-none shadow-sm flex-row items-center gap-2">
+              <Ionicons name="chatbubble-ellipses" size={20} color="#0F766E" />
+              <Text className="text-base text-gray-600">
+                Ka-agapay is typing...
+              </Text>
             </View>
           </View>
         )}
@@ -211,10 +213,13 @@ export default function ChatbotScreen() {
           {SUGGESTIONS.map((s) => (
             <Pressable
               key={s}
-              onPress={() => setInput(s)}
+              onPress={() => {
+                setInput(s);
+                setTimeout(() => handleSend(), 100);
+              }}
               className="rounded-full bg-teal-100 px-3 py-1 border border-teal-200"
             >
-              <Text className="text-xs text-[#111827]">{s}</Text>
+              <Text className="text-base text-[#111827]">{s}</Text>
             </Pressable>
           ))}
         </View>

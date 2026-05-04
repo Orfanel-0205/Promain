@@ -29,12 +29,18 @@ export default function LoginScreen() {
     authenticateWithBiometric,
     loginWithToken,
   } = useAuth();
+=======
+
+export default function LoginScreen() {
+  const router = useRouter();
+  const { login } = useAuth();
+>>>>>>> 9edf1b67d4279cba73bfbf7f43f7de47cd4c97b9
   const [phone, setPhone] = useState("");
   const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPin, setShowPin] = useState(false);
 
   const handleLogin = async () => {
+<<<<<<< HEAD
     Keyboard.dismiss();
     const trimmedPhone = phone.replace(/\D/g, "");
     if (!trimmedPhone || trimmedPhone.length < 10) {
@@ -43,10 +49,24 @@ export default function LoginScreen() {
     }
     if (!pin || pin.length < 4 || pin.length > 6) {
       Alert.alert("", "Ang PIN ay dapat 4 hanggang 6 na digit.");
+=======
+    if (!phone.match(/^09\d{9}$/)) {
+      Alert.alert(
+        "Mali",
+        "Ilagay ang tamang numero ng telepono (09XXXXXXXXX).",
+      );
       return;
     }
+
+    if (pin.trim().length < 4) {
+      Alert.alert("Mali", "Ilagay ang iyong PIN o password.");
+>>>>>>> 9edf1b67d4279cba73bfbf7f43f7de47cd4c97b9
+      return;
+    }
+
     setLoading(true);
     try {
+<<<<<<< HEAD
       await login({ phone: trimmedPhone, pin });
     } catch (e: unknown) {
       const msg =
@@ -55,11 +75,22 @@ export default function LoginScreen() {
               ?.message
           : "Hindi makapag-login. Subukan muli.";
       Alert.alert("", msg || "Hindi makapag-login. Subukan muli.");
+=======
+      await login({ phone, pin });
+      router.replace("/(tabs)");
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Hindi makapag-login. Subukan muli.";
+      Alert.alert("Error sa Pag-login", message);
+>>>>>>> 9edf1b67d4279cba73bfbf7f43f7de47cd4c97b9
     } finally {
       setLoading(false);
     }
   };
 
+<<<<<<< HEAD
   const handleBiometric = async () => {
     if (!biometricAvailable) return;
     const ok = await authenticateWithBiometric();
@@ -171,15 +202,72 @@ export default function LoginScreen() {
             <Ionicons name="finger-print" size={28} color="white" />
             <Text style={styles.biometricText}>Biometric scanner</Text>
           </Pressable>
+=======
+  const isDisabled = loading || phone.length !== 11 || pin.trim().length < 4;
+
+  return (
+    <View style={styles.container}>
+      <Pressable onPress={() => router.back()} style={styles.backButton}>
+        <Text style={styles.backArrow}>←</Text>
+      </Pressable>
+
+      <Text style={styles.heading}>Mag-login</Text>
+      <Text style={styles.subtitle}>
+        I-login ang iyong account gamit ang iyong numero at PIN.
+      </Text>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Numero ng Telepono</Text>
+        <TextInput
+          value={phone}
+          onChangeText={(text) =>
+            setPhone(text.replace(/\D/g, "").slice(0, 11))
+          }
+          placeholder="09XXXXXXXXX"
+          placeholderTextColor="#94A3B8"
+          keyboardType="phone-pad"
+          style={styles.input}
+        />
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>PIN</Text>
+        <TextInput
+          value={pin}
+          onChangeText={(text) => setPin(text)}
+          placeholder="PIN / Password"
+          placeholderTextColor="#94A3B8"
+          secureTextEntry
+          autoCapitalize="none"
+          style={styles.input}
+        />
+      </View>
+
+      <Pressable
+        onPress={handleLogin}
+        disabled={isDisabled}
+        style={[styles.loginButton, isDisabled && styles.buttonDisabled]}
+      >
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.loginButtonText}>Mag-login</Text>
+>>>>>>> 9edf1b67d4279cba73bfbf7f43f7de47cd4c97b9
         )}
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </Pressable>
+
+      <View style={styles.footerRow}>
+        <Text style={styles.footerText}>Wala pang account?</Text>
+        <Pressable onPress={() => router.push("/auth/register")}>
+          <Text style={styles.footerLink}>Magrehistro</Text>
+        </Pressable>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "#0F766E",
   },
   scroll: {
@@ -220,7 +308,40 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "600",
     color: "#ffffff",
+=======
+    backgroundColor: "#FFFFFF",
+    padding: 24,
+    paddingTop: 56,
+  },
+  backButton: {
+    marginBottom: 28,
+    alignSelf: "flex-start",
+  },
+  backArrow: {
+    fontSize: 20,
+    color: "#0D9488",
+  },
+  heading: {
+    fontSize: 32,
+    fontWeight: "800",
+    color: "#0F766E",
+    marginBottom: 12,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#0F766E",
+    marginBottom: 28,
+    lineHeight: 24,
+  },
+  inputGroup: {
+    marginBottom: 20,
+  },
+  label: {
+>>>>>>> 9edf1b67d4279cba73bfbf7f43f7de47cd4c97b9
     marginBottom: 8,
+    fontSize: 14,
+    color: "#134E4A",
+    fontWeight: "600",
   },
   input: {
     backgroundColor: "#ffffff",

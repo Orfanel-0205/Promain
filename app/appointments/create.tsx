@@ -15,8 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/context/AuthContext';
 import { createAppointment } from '@/services/api/appointments';
 import { SERVICE_TYPES, TIME_BLOCKS, RHU_OPTIONS } from '@/utils/constants';
-import type { ServiceType, TimeBlock, RhuLocation } from '@/types';
-import type { Appointment } from '@/types';
+import type { ServiceType, TimeBlock, RhuLocation, Appointment } from '@/types';
 
 const STEPS = 5;
 

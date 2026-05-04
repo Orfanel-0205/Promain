@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 import type { Appointment, CreateAppointmentInput } from "@/types";
 import { api } from "./client";
+=======
+
+import { api } from './client';
+import type { Appointment, CreateAppointmentInput } from '@/types';
+>>>>>>> 9edf1b67d4279cba73bfbf7f43f7de47cd4c97b9
 
 export async function createAppointment(
   input: CreateAppointmentInput,
